@@ -9,7 +9,7 @@ import torch.nn as nn
 
 from torchvision.models.detection import FasterRCNN
 from torchvision.models.detection.rpn import AnchorGenerator
-from gcn_lib import Grapher, act_layer
+from .gcn_lib import Grapher, act_layer
 class FFN(nn.Module):
     def __init__(self, in_features, hidden_features=None, out_features=None, act='relu', drop_path=0.0):
         super().__init__()
