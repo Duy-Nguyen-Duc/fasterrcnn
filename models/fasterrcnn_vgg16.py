@@ -39,7 +39,7 @@ def create_model(num_classes, pretrained=True, coco_model=False):
 
     backbone = model_backbone.features
     layers = []
-    for _ in range(2):
+    for _ in range(1):
         layers.append(
             Grapher(
                 in_channels=64, kernel_size=9, dilation=1, conv="mr", act="gelu",
