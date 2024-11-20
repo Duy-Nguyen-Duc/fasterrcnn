@@ -43,7 +43,7 @@ def create_model(num_classes, pretrained=True, coco_model=False):
         layers.append(
             Grapher(
                 in_channels=64, kernel_size=9, dilation=1, conv="mr", act="gelu",
-                norm="batch", bias=True, stochastic=False, epsilon=0.2,
+                norm="instance", bias=True, stochastic=False, epsilon=0.2,
                 r=1, n=196, relative_pos=False
             )
         )
