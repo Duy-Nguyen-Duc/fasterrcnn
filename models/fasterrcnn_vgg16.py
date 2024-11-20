@@ -71,7 +71,7 @@ def create_model(num_classes, pretrained=True, coco_model=False):
     # If backbone returns a Tensor, `featmap_names` is expected to
     # be [0]. We can choose which feature maps to use.
     roi_pooler = torchvision.ops.MultiScaleRoIAlign(
-        featmap_names=['0'],
+        featmap_names=['0', '1', '2'],
         output_size=7,
         sampling_ratio=2
     )
