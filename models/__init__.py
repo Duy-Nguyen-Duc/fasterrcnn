@@ -29,5 +29,3 @@ __all__ = [
     'fasterrcnn_vgg16', 
     'fasterrcnn_vgg16_fpn'
 ]
-
-from .vgg import VGG
