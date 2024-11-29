@@ -77,6 +77,64 @@ class BasicConv(Seq):
                 m.weight.data.fill_(1)
                 m.bias.data.zero_()
 
+class FFN(nn.Module):
+    def __init__(self, in_features, hidden_features=None, out_features=None, act='relu', drop_path=0.0):
+        super().__init__()
+        out_features = out_features or in_features
+        hidden_features = hidden_features or in_features
+        self.fc1 = nn.Sequential(
+            nn.Conv2d(in_features, hidden_features, 1, stride=1, padding=0),
+            nn.BatchNorm2d(hidden_features),
+        )
+        self.act = act_layer(act)
+        self.fc2 = nn.Sequential(
+            nn.Conv2d(hidden_features, out_features, 1, stride=1, padding=0),
+            nn.BatchNorm2d(out_features),
+        )
+        self.drop_path = nn.Identity()
+
+    def forward(self, x):
+        shortcut = x
+        x = self.fc1(x)
+        x = self.act(x)
+        x = self.fc2(x)
+        x = self.drop_path(x) + shortcut
+        return x#.reshape(B, C, N, 1)
+    
+class Stem(nn.Module):
+    """ Image to Visual Embedding
+    Overlap: https://arxiv.org/pdf/2106.13797.pdf
+    """
+    def __init__(self, img_size=224, in_dim=3, out_dim=768, act='relu'):
+        super().__init__()        
+        self.convs = nn.Sequential(
+            nn.Conv2d(in_dim, out_dim//2, 3, stride=2, padding=1),
+            nn.BatchNorm2d(out_dim//2),
+            act_layer(act),
+            nn.Conv2d(out_dim//2, out_dim, 3, stride=2, padding=1),
+            nn.BatchNorm2d(out_dim),
+            act_layer(act),
+            nn.Conv2d(out_dim, out_dim, 3, stride=1, padding=1),
+            nn.BatchNorm2d(out_dim),
+        )
+
+    def forward(self, x):
+        x = self.convs(x)
+        return x
+    
+class Downsample(nn.Module):
+    """ Convolution-based downsample
+    """
+    def __init__(self, in_dim=3, out_dim=768):
+        super().__init__()        
+        self.conv = nn.Sequential(
+            nn.Conv2d(in_dim, out_dim, 3, stride=2, padding=1),
+            nn.BatchNorm2d(out_dim),
+        )
+
+    def forward(self, x):
+        x = self.conv(x)
+        return x
 
 def batched_index_select(x, idx):
     r"""fetches neighbors features from a given neighbor idx
