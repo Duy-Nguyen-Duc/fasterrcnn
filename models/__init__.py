@@ -14,6 +14,7 @@ __all__ = [
     'fasterrcnn_mobilenetv3_large_320_fpn',
     'fasterrcnn_mobilenetv3_large_fpn',
     'fasterrcnn_nano',
+    'fasterrcnn_pvig_tiny',
     'fasterrcnn_resnet18',
     'fasterrcnn_resnet50_fpn_v2',
     'fasterrcnn_resnet50_fpn', 

@@ -184,6 +184,14 @@ def return_fasterrcnn_vitdet_tiny(
     )
     return model
 
+def return_fasterrcnn_pvig_tiny(
+    num_classes, pretrained=True, coco_model=False
+):
+    model = fasterrcnn_pvig_tiny.create_model(
+        num_classes, pretrained, coco_model=coco_model
+    )
+    return model
+
 def return_fasterrcnn_mobilevit_xxs(
     num_classes, pretrained=True, coco_model=False
 ):
@@ -233,6 +241,7 @@ create_model = {
     'fasterrcnn_mini_darknet_nano_head': return_fasterrcnn_mini_darknet_nano_head,
     'fasterrcnn_efficientnet_b0': return_fasterrcnn_efficientnet_b0,
     'fasterrcnn_nano': return_fasterrcnn_nano,
+    'fasterrcnn_pvig_tiny': return_fasterrcnn_pvig_tiny,
     'fasterrcnn_resnet152': return_fasterrcnn_resnet152,
     'fasterrcnn_resnet50_fpn_v2': return_fasterrcnn_resnet50_fpn_v2,
     'fasterrcnn_convnext_small': return_fasterrcnn_convnext_small, 
