@@ -39,20 +39,15 @@ def vgg_fpn_backbone(pretrained=True):
 
     # Define return layers and channel configurations
     return_layers = {
-        'vgg0': 0,  # Map stage indices to FPN identifiers
-        'vgg1': 1,
-        'vgg2': 2,
-        'vgg3': 3,
         'vgg4': 4,
     }
 
     # Input channels for each stage
-    in_channels_list = [64, 128, 256, 512, 512]
+    in_channels_list = [512]
     out_channels = 256  # Output channels for the FPN
 
     # Register stages as named submodules for compatibility with FPN
     backbone = nn.Module()
-    backbone.inplanes = in_channels_list[-1]  # Equivalent to the last stage's output channels
     for i, stage in enumerate(stages):
         stage_name = f"vgg{i}"
         setattr(backbone, stage_name, stage)
@@ -61,10 +56,9 @@ def vgg_fpn_backbone(pretrained=True):
 
 
 
-
 def create_model(num_classes, pretrained=True, coco_model=False):
     # Load the pretrained ResNet18 backbone.
-    vgg16_fpn_backbone = vgg16_fpn_backbone(pretrained)
+    backbone = vgg_fpn_backbone(pretrained)
     
     # We need the output channels of the last convolutional layers from
     # the features for the Faster RCNN model.
@@ -89,7 +83,7 @@ def create_model(num_classes, pretrained=True, coco_model=False):
 
     # Final Faster RCNN model.
     model = FasterRCNN(
-        backbone=vgg16_fpn_backbone,
+        backbone=backbone,
         num_classes=num_classes,
         rpn_anchor_generator=anchor_generator,
         box_roi_pool=roi_pooler

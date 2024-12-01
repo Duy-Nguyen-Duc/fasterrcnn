@@ -253,7 +253,10 @@ def create_model(num_classes=81, pretrained=True, coco_model=False):
         norm="LN",
         square_pad=1024,
     )
-
+    if pretrained:
+        print("Loading pretrained weights for pyramid ViG-tiny")
+        ckpt = torch.hub.load_state_dict_from_url('https://github.com/huawei-noah/Efficient-AI-Backbones/releases/download/pyramid-vig/pvig_ti_78.5.pth.tar')
+        net.load_state_dict(ckpt['model'], strict=False)
     backbone.out_channels = 256
     roi_pooler = torchvision.ops.MultiScaleRoIAlign(
         featmap_names=backbone._out_features,
