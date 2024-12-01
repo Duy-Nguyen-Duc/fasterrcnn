@@ -31,8 +31,8 @@ class ViG(Backbone):
         patch_size=16,
         input_channels=3,
         embed_dim=1024,
-        blocks=[2,2,6,2],
-        channels=[48, 96, 240, 384],
+        blocks=[2,2,18,2],
+        channels=[128, 256, 512, 1024],
         pretrain_img_size=224,
         use_abs_pos=False,
         out_feature="last_feat",
@@ -251,8 +251,8 @@ def create_model(num_classes=81, pretrained=True, coco_model=False):
     )
     if pretrained:
         print("Loading pretrained weights for pyramid ViG-tiny")
-        ckpt = torch.hub.load_state_dict_from_url('https://github.com/huawei-noah/Efficient-AI-Backbones/releases/download/pyramid-vig/pvig_ti_78.5.pth.tar')
-        net.load_state_dict(ckpt['model'], strict=False)
+        ckpt = torch.hub.load_state_dict_from_url('https://github.com/huawei-noah/Efficient-AI-Backbones/releases/download/pyramid-vig/pvig_b_83.66.pth.tar')
+        net.load_state_dict(ckpt, strict=False)
     backbone.out_channels = 256
     roi_pooler = torchvision.ops.MultiScaleRoIAlign(
         featmap_names=backbone._out_features,
