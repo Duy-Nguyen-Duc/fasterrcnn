@@ -322,11 +322,11 @@ def create_model(num_classes=81, pretrained=True, coco_model=False):
         out_feature="last_feat",
     )
 
-    # if pretrained:
-    #     print('Loading MAE Pretrained ViT Base weights...')
-    #     # ckpt = torch.utis('weights/mae_pretrain_vit_base.pth')
-    #     ckpt = torch.hub.load_state_dict_from_url('https://dl.fbaipublicfiles.com/mae/pretrain/mae_pretrain_vit_base.pth')
-    #     net.load_state_dict(ckpt['model'], strict=False)
+    if pretrained:
+        print('Loading MAE Pretrained ViT Base weights...')
+        # ckpt = torch.utis('weights/mae_pretrain_vit_base.pth')
+        ckpt = torch.hub.load_state_dict_from_url('https://dl.fbaipublicfiles.com/mae/pretrain/mae_pretrain_vit_base.pth')
+        net.load_state_dict(ckpt['model'], strict=False)
 
     backbone = SimpleFeaturePyramid(
         net,

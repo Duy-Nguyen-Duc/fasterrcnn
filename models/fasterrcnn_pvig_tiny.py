@@ -7,18 +7,16 @@ import torchvision
 from functools import partial
 from torchvision.models.detection import FasterRCNN
 from models.layers import (
-    Backbone, 
-    PatchEmbed, 
-    Block, 
+    Backbone,
+    PatchEmbed,
+    Block,
     get_abs_pos,
     get_norm,
     Conv2d,
     LastLevelMaxPool
 )
 from models.utils import _assert_strides_are_log2_contiguous
-from gcn_lib import Grapher, act_layer, FFN, Stem, Downsample
-
-
+from models.gcn_lib import Grapher, act_layer, FFN, Stem, Downsample
 class ViG(Backbone):
     def __init__(
         self,
@@ -54,12 +52,12 @@ class ViG(Backbone):
         else:
             self.pos_embed = None
         self.n_blocks = sum(blocks)
-        
+
         reduce_ratios = [4, 2, 1, 1]
         dpr = [x.item() for x in torch.linspace(0, 0, self.n_blocks)]
         num_knn = [int(x.item()) for x in torch.linspace(k, k, self.n_blocks)]
         max_dilation = 49 // max(num_knn)
-        HW = 800//4 * 1600//4
+        HW = 320//4 * 320//4
         self.stem = Stem(out_dim=channels[0], act=act)
         self.backbone = nn.ModuleList([])
         idx = 0
@@ -78,7 +76,7 @@ class ViG(Backbone):
         self.backbone = nn.Sequential(*self.backbone)
         self.model_init()
 
-        self._out_feature_channels = {out_feature: embed_dim}
+        self._out_feature_channels = {out_feature: channels[-1]}
         self._out_feature_strides = {out_feature: patch_size}
         self._out_features = [out_feature]
 
@@ -92,15 +90,13 @@ class ViG(Backbone):
                     m.bias.requires_grad = True
 
     def forward(self, inputs):
-        x = self.stem(inputs) + self.pos_embed
+        x = self.stem(inputs)
         B, C, H, W = x.shape
         for i in range(len(self.backbone)):
             x = self.backbone[i](x)
 
-        x = F.adaptive_avg_pool2d(x, 1)
-        outputs = {self._out_features[0]: x.permute(0, 3, 1, 2)}
+        outputs = {self._out_features[0]: x}
         return outputs
-
 
 class SimpleFeaturePyramid(Backbone):
     """
@@ -271,3 +267,8 @@ def create_model(num_classes=81, pretrained=True, coco_model=False):
         box_roi_pool=roi_pooler
     )
     return model
+
+if __name__ == '__main__':
+    from model_summary import summary
+    model = create_model(81, pretrained=True)
+    summary(model)
