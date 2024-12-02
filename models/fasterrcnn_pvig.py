@@ -146,7 +146,7 @@ class SimpleFeaturePyramid(Backbone):
         use_bias = norm == ""
         for idx, scale in enumerate(scale_factors):
             out_dim = dim
-            if scale == 4.0:
+            if scale == 8.0:
                 layers = [
                     nn.ConvTranspose2d(dim, dim // 2, kernel_size=2, stride=2),
                     get_norm(norm, dim // 2),
@@ -154,12 +154,12 @@ class SimpleFeaturePyramid(Backbone):
                     nn.ConvTranspose2d(dim // 2, dim // 4, kernel_size=2, stride=2),
                 ]
                 out_dim = dim // 4
-            elif scale == 2.0:
+            elif scale == 4.0:
                 layers = [nn.ConvTranspose2d(dim, dim // 2, kernel_size=2, stride=2)]
                 out_dim = dim // 2
-            elif scale == 1.0:
+            elif scale == 2.0:
                 layers = []
-            elif scale == 0.5:
+            elif scale == 1.0:
                 layers = [nn.MaxPool2d(kernel_size=2, stride=2)]
             else:
                 raise NotImplementedError(f"scale_factor={scale} is not supported yet.")
@@ -244,7 +244,7 @@ def create_model(num_classes=81, pretrained=True, coco_model=False):
         net,
         in_feature="last_feat",
         out_channels=256,
-        scale_factors=(4.0, 2.0, 1.0, 0.5),
+        scale_factors=(8.0, 4.0, 2.0, 1.0),
         top_block=LastLevelMaxPool(),
         norm="LN",
         square_pad=1024,
