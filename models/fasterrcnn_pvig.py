@@ -152,15 +152,24 @@ class SimpleFeaturePyramid(Backbone):
                     get_norm(norm, dim // 2),
                     nn.GELU(),
                     nn.ConvTranspose2d(dim // 2, dim // 4, kernel_size=2, stride=2),
+                    get_norm(norm, dim // 4),
+                    nn.GELU(),
+                    nn.ConvTranspose2d(dim // 4, dim // 8, kernel_size=2, stride=2)
                 ]
-                out_dim = dim // 4
+                out_dim = dim // 8
             elif scale == 4.0:
-                layers = [nn.ConvTranspose2d(dim, dim // 2, kernel_size=2, stride=2)]
-                out_dim = dim // 2
+                layers = [
+                nn.ConvTranspose2d(dim, dim // 2, kernel_size=2, stride=2),  # Upscale by 2x
+                get_norm(norm, dim // 2),
+                nn.GELU(),
+                nn.ConvTranspose2d(dim // 2, dim // 4, kernel_size=2, stride=2),  # Another 2x
+            ]
+                out_dim = dim // 4
             elif scale == 2.0:
-                layers = []
+                layers = [nn.ConvTranspose2d(dim, dim // 2, kernel_size=2, stride=2)]  # Upscale by 2x
+                out_dim = dim // 2
             elif scale == 1.0:
-                layers = [nn.MaxPool2d(kernel_size=2, stride=2)]
+                layers = []
             else:
                 raise NotImplementedError(f"scale_factor={scale} is not supported yet.")
 
@@ -250,7 +259,7 @@ def create_model(num_classes=81, pretrained=True, coco_model=False):
         square_pad=1024,
     )
     if pretrained:
-        print("Loading pretrained weights for pyramid ViG-tiny")
+        print("Loading pretrained weights for pyramid ViG")
         ckpt = torch.hub.load_state_dict_from_url('https://github.com/huawei-noah/Efficient-AI-Backbones/releases/download/pyramid-vig/pvig_b_83.66.pth.tar')
         net.load_state_dict(ckpt, strict=False)
     backbone.out_channels = 256

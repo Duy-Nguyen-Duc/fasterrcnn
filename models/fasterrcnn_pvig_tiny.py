@@ -83,7 +83,7 @@ class ViG(Backbone):
     def model_init(self):
         for m in self.modules():
             if isinstance(m, torch.nn.Conv2d):
-                torch.nn.init.kaiming_normal_(m.weight)
+                torch.nn.init.kaiming_normal_(m.weight) 
                 m.weight.requires_grad = True
                 if m.bias is not None:
                     m.bias.data.zero_()
